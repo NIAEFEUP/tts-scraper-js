@@ -13,12 +13,13 @@ CLI tool for scraping timetable on University of Porto's Information System (SIG
 
 Options:
 
-  -V, --version  output the version number
-  -h, --help     output usage information
+  -V, --version      output the version number
+  -h, --help         output usage information
 
 Commands:
 
-  faculties      scrape faculties
+  faculties          scrape faculties
+  courses [options]  scrape courses
 ```
 
 ## Running 
