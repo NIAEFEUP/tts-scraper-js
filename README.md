@@ -14,7 +14,7 @@ Timetable scraper for University of Porto's Information System (SIGARRA)
 Options:
 
   -V, --version    output the version number
-  -f, --faculties  Scrape faculties
+  -f, --faculties  scrape faculties
   -h, --help       output usage information
 ```
 

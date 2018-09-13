@@ -8,7 +8,7 @@ import { description, version } from "../package.json";
 program
   .version(version)
   .description(description)
-  .option("-f, --faculties", "Scrape faculties")
+  .option("-f, --faculties", "scrape faculties")
   .parse(process.argv);
 
 async function run() {
