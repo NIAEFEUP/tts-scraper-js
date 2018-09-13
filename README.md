@@ -23,6 +23,8 @@ Commands:
 
 ## Running 
 
+First, install the dependencies by running `npm install`. This only needs to be run for the first time and every time there is an update in package versions.
+
 To scrape faculties and output to `stdout`, run `npm start --silent -- faculties`. 
 
 To scrape faculties and save the result to a file named `faculties.csv` inside the `results` directory, run `npm start --silent -- faculties > results/faculties.csv`.
@@ -35,6 +37,13 @@ To run tests once, execute `npm test`.
 To run tests and rerun them on file changes, run `npm test -- --watch`.
 
 ### Examples 
+
+#### Useful Bash Commands
+
+* Print everything but the first line: `tail -n +2`
+* Print everything but the last line: `head -n -1`
+* Get the second column of a CSV: `cut -d "," -f2`
+* Convert newline separated values into CSV: `paste -sd","`
 
 #### Scrape faculties and output to stdout
 ```bash
@@ -59,6 +68,13 @@ pbs,Porto Business School
 ```
 
 Note: the output will always have a newline at the end.
+
+#### Scrape faculties and transform acronyms to csv
+```bash
+$ npm start --silent -- faculties | head -n -1 | tail -n +2 | cut -d "," -f1 | paste -sd","
+faup,fbaup,fcup,fcnaup,fadeup,fdup,fep,feup,ffup,flup,fmup,fmdup,fpceup,icbas,pbs
+```
+
 
 ## Scraping Flow
 
