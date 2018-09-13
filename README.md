@@ -7,15 +7,18 @@ In order to achieve this, the project uses TypeScript to provide type annotation
 ## Help
 
 ```
-Usage: index.ts [options]
+Usage:  [options] [command]
 
 Timetable scraper for University of Porto's Information System (SIGARRA)
 
 Options:
 
-  -V, --version    output the version number
-  -f, --faculties  scrape faculties
-  -h, --help       output usage information
+  -V, --version  output the version number
+  -h, --help     output usage information
+
+Commands:
+
+  faculties      scrape faculties
 ```
 
 ## Running 

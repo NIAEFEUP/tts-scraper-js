@@ -5,23 +5,29 @@ import { fetchFaculties } from "./runner";
 
 import { description, version } from "../package.json";
 
-program
-  .version(version)
-  .description(description)
-  .option("-f, --faculties", "scrape faculties")
-  .parse(process.argv);
+program.version(version).description(description);
 
-async function run() {
-  if (program.faculties) {
+program
+  .command("faculties")
+  .description("scrape faculties")
+  .action(async () => {
     const faculties: Faculty[] = await fetchFaculties();
 
     const csv = await generateCsv(faculties);
     console.log(csv);
-  }
+  });
 
-  if (!program.faculties) {
-    program.help();
-  }
+program.on("command:*", () => {
+  console.error(
+    ` Invalid command: ${program.args.join(
+      " "
+    )}\nSee --help for a list of available commands.`
+  );
+  process.exit(1);
+});
+
+if (process.argv.length <= 2) {
+  program.help();
 }
 
-run();
+program.parse(process.argv);
