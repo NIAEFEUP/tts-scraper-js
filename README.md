@@ -9,7 +9,7 @@ In order to achieve this, the project uses TypeScript to provide type annotation
 ```
 Usage:  [options] [command]
 
-Timetable scraper for University of Porto's Information System (SIGARRA)
+CLI tool for scraping timetable on University of Porto's Information System (SIGARRA), outputting the results as comma-separated values (CSV).
 
 Options:
 
@@ -23,17 +23,43 @@ Commands:
 
 ## Running 
 
-The tool is supposed to output the result to `stdout`. This allows for composition, such as piping into a file.
+To scrape faculties and output to `stdout`, run `npm start --silent -- faculties`. 
 
-To scrape faculties, run `npm start --silent -- -f`. 
+To scrape faculties and save the result to a file named `faculties.csv` inside the `results` directory, run `npm start --silent -- faculties > results/faculties.csv`.
 
-To scrape faculties and save the result to a file named `faculties.csv` inside the `results` directory, run `npm start --silent -- -f > results/faculties.csv`.
+Note: The result is output as CSV to `stdout`.
 
 ### Tests
 
 To run the tests, execute `npm test`.
 
-### Notes about SIGARRA Database
+### Examples 
+
+#### Scrape faculties and output to stdout
+```bash
+$ npm start --silent -- faculties
+acronym,name
+faup,Faculdade de Arquitetura (FAUP)
+fbaup,Faculdade de Belas Artes (FBAUP)
+fcup,Faculdade de Ciências (FCUP)
+fcnaup,Faculdade de Ciências da Nutrição e da Alimentação (FCNAUP)
+fadeup,Faculdade de Desporto (FADEUP)
+fdup,Faculdade de Direito (FDUP)
+fep,Faculdade de Economia (FEP)
+feup,Faculdade de Engenharia (FEUP)
+ffup,Faculdade de Farmácia (FFUP)
+flup,Faculdade de Letras (FLUP)
+fmup,Faculdade de Medicina (FMUP)
+fmdup,Faculdade de Medicina Dentária (FMDUP)
+fpceup,Faculdade de Psicologia e de Ciências da Educação (FPCEUP)
+icbas,Instituto de Ciências Biomédicas Abel Salazar (ICBAS)
+pbs,Porto Business School
+
+```
+
+Note: the output will always have a newline at the end.
+
+## Notes about SIGARRA Database
 * A year represents the lowest number of a school year (e.g.: `2017` represents `2017/2018`);
 * Faculties are indexed by their acronym (`feup`, `fcup`, etc.);
 * Courses are identified by a course id and year;

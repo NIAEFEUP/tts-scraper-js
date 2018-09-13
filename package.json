@@ -1,7 +1,7 @@
 {
   "name": "uporto-timetable-scraper",
   "version": "0.0.1",
-  "description": "Timetable scraper for University of Porto's Information System (SIGARRA)",
+  "description": "CLI tool for scraping timetable on University of Porto's Information System (SIGARRA), outputting the results as comma-separated values (CSV).",
   "main": "src/index.ts",
   "scripts": {
     "start": "ts-node src/index.ts",
