@@ -4,8 +4,8 @@ install:
   - npm install
 
 script:
-  - npm lint
-  - npm run test
+  - npm run lint
+  - npm test
 
 cache:
   directories:
