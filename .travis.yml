@@ -1,0 +1,12 @@
+language: node_js
+
+install:
+  - npm install
+
+script:
+  - npm lint
+  - npm test
+
+cache:
+  directories:
+  - "node_modules"

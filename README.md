@@ -31,7 +31,8 @@ Note: The result is output as CSV to `stdout`.
 
 ### Tests
 
-To run the tests, execute `npm test`.
+To run tests once, execute `npm test`.
+To run tests and rerun them on file changes, run `npm test -- --watch`.
 
 ### Examples 
 
@@ -58,6 +59,18 @@ pbs,Porto Business School
 ```
 
 Note: the output will always have a newline at the end.
+
+## Scraping Flow
+
+The scraping flow is as follows:
+1. Scrape faculties
+1. Given a year: for each faculty, scrape its courses
+1. Given a year and a period: for each course:
+   1. scrape its course units
+   1. scrape its classes
+       1. for each class, scrape its schedule
+    
+Note: Steps 3.i. and 3.ii. can be run in parallel as they only depend on a course.
 
 ## Notes about SIGARRA Database
 * A year represents the lowest number of a school year (e.g.: `2017` represents `2017/2018`);

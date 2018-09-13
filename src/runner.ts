@@ -119,12 +119,12 @@ async function fetchCourseUnits(
 }
 
 async function fetchClasses(
-  acronym: string,
+  faculty: Faculty,
   courseId: number,
   year: number,
   periodId: Period
 ) {
-  const url = generateClassesUrl(acronym, courseId, year, periodId);
+  const url = generateClassesUrl(faculty.acronym, courseId, year, periodId);
 
   const html = await fetch(url, { cookieNeeded: true });
 
@@ -132,12 +132,17 @@ async function fetchClasses(
 }
 
 async function fetchClassesSchedule(
-  acronym: string,
+  faculty: Faculty,
   year: number,
   periodId: Period,
   classId: number
 ) {
-  const url = generateClassScheduleUrl(acronym, year, periodId, classId);
+  const url = generateClassScheduleUrl(
+    faculty.acronym,
+    year,
+    periodId,
+    classId
+  );
 
   const html = await fetch(url, { cookieNeeded: true });
 

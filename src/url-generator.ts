@@ -46,13 +46,6 @@ export function generateCourseUnitInfoUrl(
   return `https://sigarra.up.pt/${facultyAcronym}/pt/ucurr_geral.ficha_uc_view?pv_ocorrencia_id=${courseUnitId}`;
 }
 
-export function generateCourseUnitScheduleUrl(
-  facultyAcronym: string,
-  courseUnitId: number
-) {
-  return `https://sigarra.up.pt/${facultyAcronym}/pt/hor_geral.ucurr_view?pv_ocorrencia_id=${courseUnitId}`;
-}
-
 export function generateClassScheduleUrl(
   facultyAcronym: string,
   year: number,

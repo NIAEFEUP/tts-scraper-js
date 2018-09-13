@@ -1,6 +1,6 @@
 import fs from "fs";
-import { scrapeCourseUnitInfo, scrapeSearchPages } from "./courseUnits";
 import { Course } from "../models";
+import { scrapeCourseUnitInfo, scrapeSearchPages } from "./courseUnits";
 
 describe("searchPages", () => {
   test("first page is scraped correctly", () => {
