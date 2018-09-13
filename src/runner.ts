@@ -22,6 +22,7 @@ import {
   generateCourseUrl,
   generateFacultyUrl
 } from "./url-generator";
+import { flatten } from "./utils";
 
 export async function fetchFaculties(): Promise<Faculty[]> {
   const url = generateFacultyUrl();
@@ -32,47 +33,50 @@ export async function fetchFaculties(): Promise<Faculty[]> {
 }
 
 async function fetchCoursesByType(
-  faculty: Faculty,
+  facultyAcronym: Faculty["acronym"],
   courseType: CourseType,
   year: number
 ): Promise<IncompleteCourse[]> {
-  const url = generateCoursesUrl(faculty.acronym, courseType, year);
+  const url = generateCoursesUrl(facultyAcronym, courseType, year);
 
   const html = await fetch(url);
 
-  return scrapeCourses(html, faculty.acronym);
+  return scrapeCourses(html, facultyAcronym);
 }
 
 async function fetchCourseInfo(
-  faculty: Faculty,
+  facultyAcronym: Faculty["acronym"],
   referer: IncompleteCourse,
   year: number
-) {
-  const url = generateCourseUrl(faculty.acronym, referer.id, year);
+): Promise<Course | null> {
+  const url = generateCourseUrl(facultyAcronym, referer.id, year);
 
   const html = await fetch(url);
 
   return scrapeCourse(html, referer);
 }
 
-async function fetchCourses(faculty: Faculty, year: number): Promise<Course[]> {
+export async function fetchCourses(
+  facultyAcronym: Faculty["acronym"],
+  year: number
+): Promise<Course[]> {
   const courseTypes: CourseType[] = ["MI", "M", "L", "D"];
 
   const coursesPromises: Array<Promise<IncompleteCourse[]>> = courseTypes.map(
-    courseType => fetchCoursesByType(faculty, courseType, year)
+    courseType => fetchCoursesByType(facultyAcronym, courseType, year)
   );
 
-  const incompleteCourses: IncompleteCourse[] = ([] as IncompleteCourse[]).concat(
-    ...(await Promise.all(coursesPromises))
+  const incompleteCourses: IncompleteCourse[] = flatten(
+    await Promise.all(coursesPromises)
   );
 
   const courseInfoPromises = incompleteCourses.map(c =>
-    fetchCourseInfo(faculty, c, year)
+    fetchCourseInfo(facultyAcronym, c, year)
   );
 
-  return (await Promise.all(courseInfoPromises)).filter(
-    c => c !== null
-  ) as Course[];
+  const result: Array<Course | null> = await Promise.all(courseInfoPromises);
+
+  return result.filter((c): c is Course => c !== null);
 }
 
 async function fetchCourseUnits(
