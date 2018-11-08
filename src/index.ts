@@ -56,9 +56,7 @@ program
 
 program
   .command("course-units")
-  .description(
-    "scrape course units. (courses can only belong to faculty given)"
-  )
+  .description("scrape course units")
   .option(
     "-f, --faculty <acronym>",
     "lower case faculty acronym where the courses belong to, e.g.: feup"
