@@ -45,7 +45,8 @@ export function scrapeSearchPages(html: string): CourseUnitSearch {
 
 export function scrapeCourseUnitInfo(
   html: string,
-  course: Course
+  courseId: Course["id"],
+  courseUnitId: number
 ): CourseUnit | null {
   const $ = cheerio.load(html);
 
@@ -73,7 +74,7 @@ export function scrapeCourseUnitInfo(
   // Occurrence has a string that contains both the year and the semester type
   const occurrence = $("#conteudoinner > h2").text();
 
-  // Possible semster types: '1', '2', 'A', 'SP'
+  // Possible semester types: '1', '2', 'A', 'SP'
   // '1' and '2' represent a semester number
   // 'A' represents an annual course unit
   // 'SP' represents a course unit without effect this year
@@ -95,10 +96,11 @@ export function scrapeCourseUnitInfo(
   }
 
   return {
+    id: courseUnitId,
     name,
     acronym,
     courseYear,
-    courseId: course.id,
+    courseId,
     year,
     semesters
   };

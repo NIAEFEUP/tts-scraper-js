@@ -11,6 +11,14 @@ export function deleteUntilFirstOccurence(str: string, char: string): string {
  * Parses "FEP,FEUP" into an array containing ["FEP", "FEUP"]
  * @param input
  */
+export function parseIntegerList(input: string): number[] {
+  return input.split(",").map((s: string) => Number.parseInt(s, 10));
+}
+
+/**
+ * Parses "FEP,FEUP" into an array containing ["FEP", "FEUP"]
+ * @param input
+ */
 export function parseList(input: string): string[] {
   return input.split(",");
 }

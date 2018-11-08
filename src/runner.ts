@@ -79,28 +79,29 @@ export async function fetchCourses(
   return result.filter((c): c is Course => c !== null);
 }
 
-async function fetchCourseUnits(
-  faculty: Faculty,
-  course: Course,
+export async function fetchCourseUnits(
+  facultyAcronym: Faculty["acronym"],
+  courseId: Course["id"],
   year: number,
-  periodId: Period
+  period: Period
 ): Promise<CourseUnit[]> {
   let url = generateCourseUnitSearchUrl(
-    faculty.acronym,
-    course.id,
+    facultyAcronym,
+    courseId,
     year,
-    periodId,
+    period,
     1
   );
+
   const html = await fetch(url);
   const { courseUnitIds, lastPage }: CourseUnitSearch = scrapeSearchPages(html);
 
   for (let i = 2; i <= lastPage; i++) {
     url = generateCourseUnitSearchUrl(
-      faculty.acronym,
-      course.id,
+      facultyAcronym,
+      courseId,
       year,
-      periodId,
+      period,
       i
     );
 
@@ -111,12 +112,11 @@ async function fetchCourseUnits(
     courseUnitIds.push(...ids);
   }
 
-  const unitsUrls = courseUnitIds.map(id =>
-    generateCourseUnitInfoUrl(faculty.acronym, id)
-  );
-
   const results: Array<CourseUnit | null> = await Promise.all(
-    unitsUrls.map(async uri => scrapeCourseUnitInfo(await fetch(uri), course))
+    courseUnitIds.map(async id => {
+      const uri = generateCourseUnitInfoUrl(facultyAcronym, id);
+      return scrapeCourseUnitInfo(await fetch(uri), courseId, id);
+    })
   );
 
   return results.filter(cu => cu !== null) as CourseUnit[];

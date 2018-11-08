@@ -25,6 +25,7 @@ export interface Class {
 }
 
 export interface CourseUnit {
+  id: number;
   acronym: string;
   name: string;
   courseYear: number;
@@ -63,4 +64,8 @@ export type LessonType = "TP" | "T" | string;
 export type CourseType = "MI" | "M" | "L" | "D";
 
 /** @param 1 for annual, 2 for first semester, 3 for second semester */
-export type Period = 1 | 2 | 3;
+export enum Period {
+  ANNUAL = 1,
+  FIRST_SEMESTER = 2,
+  SECOND_SEMESTER = 3
+}

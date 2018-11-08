@@ -1,3 +1,7 @@
+/**
+ * Generates URLs based on input parameters
+ */
+
 import { CourseType, Period } from "./models";
 
 export function generateFacultyUrl() {
