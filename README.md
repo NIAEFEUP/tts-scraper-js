@@ -21,6 +21,7 @@ Commands:
   faculties               scrape faculties
   courses [options]       scrape courses
   course-units [options]  scrape course units
+  classes [options]       scrape classes
 ```
 
 ## Running 
