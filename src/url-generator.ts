@@ -2,7 +2,7 @@
  * Generates URLs based on input parameters
  */
 
-import { CourseType, Period } from "./models";
+import { Class, CourseType, Faculty, Period } from "./models";
 
 export function generateFacultyUrl() {
   return "https://sigarra.up.pt/up/pt/web_base.gera_pagina?p_pagina=escolas";
@@ -51,10 +51,10 @@ export function generateCourseUnitInfoUrl(
 }
 
 export function generateClassScheduleUrl(
-  facultyAcronym: string,
+  facultyAcronym: Faculty["acronym"],
   year: number,
   periodId: Period,
-  classId: number
+  classId: Class["id"]
 ) {
   return `https://sigarra.up.pt/${facultyAcronym}/pt/hor_geral.turmas_view?pv_turma_id=${classId}&pv_ano_lectivo=${year}&pv_periodos=${periodId}`;
 }

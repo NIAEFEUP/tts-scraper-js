@@ -136,18 +136,13 @@ export async function fetchClasses(
   return scrapeClasses(html);
 }
 
-async function fetchClassesSchedule(
-  faculty: Faculty,
+export async function fetchClassesSchedule(
+  facultyAcronym: Faculty["acronym"],
   year: number,
   periodId: Period,
-  classId: number
+  classId: Class["id"]
 ) {
-  const url = generateClassScheduleUrl(
-    faculty.acronym,
-    year,
-    periodId,
-    classId
-  );
+  const url = generateClassScheduleUrl(facultyAcronym, year, periodId, classId);
 
   const html = await fetch(url, { cookieNeeded: true });
 

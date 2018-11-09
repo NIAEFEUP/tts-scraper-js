@@ -3,9 +3,10 @@ import { isArray, isNumber, isString } from "util";
 import { description, version } from "../package.json";
 import { generateCsv } from "./csv";
 import { login } from "./fetcher";
-import { Class, Course, CourseUnit, Faculty } from "./models";
+import { Class, Course, CourseUnit, Faculty, Lesson } from "./models";
 import {
   fetchClasses,
+  fetchClassesSchedule,
   fetchCourses,
   fetchCourseUnits,
   fetchFaculties
@@ -197,6 +198,84 @@ program
     const classes: Class[] = flatten(classesPerCourse);
 
     console.log(await generateCsv(classes));
+  });
+
+program
+  .command("schedules")
+  .description("scrape schedules")
+  .option(
+    "-f, --faculty <acronym>",
+    "lower case faculty acronym where the courses belong to, e.g.: feup"
+  )
+  .option(
+    "-c, --classes <classes-ids>",
+    "comma-separated array of classes' ids, e.g.: 213,214,215",
+    parseIntegerList
+  )
+  .option(
+    "-y, --year <year>",
+    "school year, e.g. for 2017/18, the year is 2017.",
+    parseInt
+  )
+  .option(
+    "-p --period <period>",
+    "school period, eg. 1 for annual, 2 for first semester, 3 for second semester",
+    parseInt
+  )
+  .option(
+    "-u, --username <username>",
+    "username used to login in sigarra, e.g.: up201859432"
+  )
+  .action(async options => {
+    if (!isString(options.faculty)) {
+      console.error(`Invalid command: 'faculty' must be a string`);
+
+      process.exit(1);
+    }
+
+    if (!isArray(options.classes) || !options.classes.every(Number.isInteger)) {
+      console.error(`Invalid command: 'classes' must be an array of integers`);
+
+      process.exit(1);
+    }
+
+    if (!isNumber(options.year) || options.year < 0) {
+      console.error(`Invalid command: 'year' must be a number`);
+
+      process.exit(1);
+    }
+
+    if (!isNumber(options.period) || options.period < 1 || options.period > 3) {
+      console.error(
+        `Invalid command: 'period' must be a number between 1 and 3`
+      );
+
+      process.exit(1);
+    }
+
+    if (!isString(options.username)) {
+      console.error(`Invalid command: 'username' must be a string`);
+
+      process.exit(1);
+    }
+
+    await login(options.username, await readPassword());
+
+    const promises: Array<Promise<Lesson[]>> = options.classes.map(
+      (classId: number) =>
+        fetchClassesSchedule(
+          options.faculty,
+          options.year,
+          options.period,
+          classId
+        )
+    );
+
+    const lessonsPerClass = await Promise.all(promises);
+
+    const lessons: Lesson[] = flatten(lessonsPerClass);
+
+    console.log(await generateCsv(lessons));
   });
 
 program.on("command:*", () => {

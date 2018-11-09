@@ -48,6 +48,7 @@ export interface IncompleteLesson {
 }
 
 export interface Lesson extends IncompleteLesson {
+  courseUnitId: CourseUnit["id"];
   dayOfTheWeek: number;
   startTime: number;
   duration: number;

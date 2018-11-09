@@ -1,6 +1,6 @@
 import fs from "fs";
 import { Lesson } from "../models";
-import { scrapeOverlappingLessons, scrapeSchedule } from "./schedule";
+import { scrapeSchedule } from "./schedule";
 
 const courseUnitScheduleWithResults = fs
   .readFileSync("./examples/course_unit_schedule.html", "latin1")
@@ -26,6 +26,7 @@ describe("course unit schedule", () => {
     const expected: Lesson[] = [
       {
         dayOfTheWeek: 0,
+        courseUnitId: 419985,
         duration: 2,
         startTime: 8,
         className: "COMP_443",
@@ -35,6 +36,7 @@ describe("course unit schedule", () => {
       },
       {
         className: "1MIEIC03",
+        courseUnitId: 419985,
         dayOfTheWeek: 1,
         duration: 2,
         startTime: 8.5,
@@ -44,6 +46,7 @@ describe("course unit schedule", () => {
       },
       {
         className: "1MIEIC04",
+        courseUnitId: 419985,
         dayOfTheWeek: 3,
         duration: 2,
         startTime: 8.5,
@@ -53,6 +56,7 @@ describe("course unit schedule", () => {
       },
       {
         className: "COMP_640",
+        courseUnitId: 419985,
         dayOfTheWeek: 4,
         duration: 2,
         startTime: 9,
@@ -62,6 +66,7 @@ describe("course unit schedule", () => {
       },
       {
         className: "COMP_1490",
+        courseUnitId: 419985,
         dayOfTheWeek: 2,
         duration: 1.5,
         startTime: 10,
@@ -71,6 +76,7 @@ describe("course unit schedule", () => {
       },
       {
         className: "COMP_1490",
+        courseUnitId: 419985,
         dayOfTheWeek: 1,
         duration: 1.5,
         startTime: 10.5,
@@ -80,6 +86,7 @@ describe("course unit schedule", () => {
       },
       {
         className: "1MIEIC01",
+        courseUnitId: 419985,
         dayOfTheWeek: 2,
         duration: 2,
         startTime: 11.5,
@@ -93,28 +100,6 @@ describe("course unit schedule", () => {
   });
 });
 
-// describe("overlapping lessons", () => {
-//   test("are scraped correctly", () => {
-//     const expected = [
-//       {
-//         className: "1MIEIC02",
-//         classUrl:
-//           "hor_geral.turmas_view?pv_turma_id=208139&pv_ano_lectivo=2018&pv_periodos=1&pv_periodos=2&pv_periodos=4&pv_periodos=5&pv_periodos=8",
-//         dayOfTheWeek: 0,
-//         duration: 2,
-//         startTime: 8,
-//         lessonType: "TP",
-//         professor: "AJA",
-//         room: "B319"
-//       }
-//     ];
-//
-//     expect(scrapeOverlappingLessons(courseUnitScheduleWithResults)).toEqual(
-//       expected
-//     );
-//   });
-// });
-
 describe("class schedule", () => {
   test("is scraped correctly when there are no results", () => {
     const expected: Lesson[] = [];
@@ -126,6 +111,7 @@ describe("class schedule", () => {
     const expected: Lesson[] = [
       {
         className: "1MIEIC02",
+        courseUnitId: 419985,
         dayOfTheWeek: 0,
         duration: 2,
         lessonType: "TP",
@@ -135,6 +121,7 @@ describe("class schedule", () => {
       },
       {
         className: "1MIEIC02",
+        courseUnitId: 419982,
         dayOfTheWeek: 1,
         duration: 2,
         lessonType: "TP",
@@ -144,6 +131,7 @@ describe("class schedule", () => {
       },
       {
         className: "COMP_1490",
+        courseUnitId: 419982,
         dayOfTheWeek: 2,
         duration: 1.5,
         lessonType: "T",
@@ -153,6 +141,7 @@ describe("class schedule", () => {
       },
       {
         className: "1MIEIC02",
+        courseUnitId: 419981,
         dayOfTheWeek: 3,
         duration: 2,
         lessonType: "TP",
@@ -162,6 +151,7 @@ describe("class schedule", () => {
       },
       {
         className: "COMP_1490",
+        courseUnitId: 419981,
         dayOfTheWeek: 0,
         duration: 2,
         lessonType: "T",
@@ -171,6 +161,7 @@ describe("class schedule", () => {
       },
       {
         className: "COMP_1490",
+        courseUnitId: 419985,
         dayOfTheWeek: 2,
         duration: 1.5,
         lessonType: "T",
@@ -180,6 +171,7 @@ describe("class schedule", () => {
       },
       {
         className: "COMP_1490",
+        courseUnitId: 419985,
         dayOfTheWeek: 1,
         duration: 1.5,
         lessonType: "T",
@@ -189,6 +181,7 @@ describe("class schedule", () => {
       },
       {
         className: "COMP_1490",
+        courseUnitId: 419984,
         dayOfTheWeek: 3,
         duration: 1.5,
         lessonType: "T",
@@ -198,6 +191,7 @@ describe("class schedule", () => {
       },
       {
         className: "COMP_1490",
+        courseUnitId: 419982,
         dayOfTheWeek: 4,
         duration: 1.5,
         lessonType: "T",
@@ -207,6 +201,7 @@ describe("class schedule", () => {
       },
       {
         className: "1MIEIC02",
+        courseUnitId: 419984,
         dayOfTheWeek: 2,
         duration: 2,
         lessonType: "TP",
@@ -216,6 +211,7 @@ describe("class schedule", () => {
       },
       {
         className: "COMP_1490",
+        courseUnitId: 419984,
         dayOfTheWeek: 0,
         duration: 1.5,
         lessonType: "T",
@@ -225,6 +221,7 @@ describe("class schedule", () => {
       },
       {
         className: "COMP_1490",
+        courseUnitId: 419983,
         dayOfTheWeek: 1,
         duration: 1.5,
         lessonType: "T",
@@ -234,6 +231,7 @@ describe("class schedule", () => {
       },
       {
         className: "COMP_1490",
+        courseUnitId: 419983,
         dayOfTheWeek: 3,
         duration: 1.5,
         lessonType: "T",
@@ -243,6 +241,7 @@ describe("class schedule", () => {
       },
       {
         className: "1MIEIC02",
+        courseUnitId: 419983,
         dayOfTheWeek: 4,
         duration: 2,
         lessonType: "TP",
@@ -252,6 +251,7 @@ describe("class schedule", () => {
       },
       {
         className: "1MIEIC02",
+        courseUnitId: 420521,
         dayOfTheWeek: 2,
         duration: 2,
         lessonType: "TP",

@@ -1,70 +1,14 @@
+// tslint:disable-next-line no-var-requires
+const querystring = require("querystring");
+// tslint:disable-next-line no-var-requires
+const assert = require("assert");
 import * as cheerio from "cheerio";
 import { IncompleteLesson, Lesson } from "../models";
 
-const daysOfTheWeek: Record<string, number> = {
-  Segunda: 0,
-  Terça: 1,
-  Quarta: 2,
-  Quinta: 3,
-  Sexta: 4,
-  Sábado: 5
-};
-
-export function scrapeOverlappingLessons(html: string) {
-  const $ = cheerio.load(html);
-
-  // First two rows are headers, so must be removed
-  const overlappingLessons = $("table.dados > tbody > tr").slice(2);
-
-  return $(overlappingLessons)
-    .map((_: any, row: CheerioElement) => {
-      let lessonType = $(row)
-        .children(":nth-child(1)")
-        .text();
-
-      lessonType = lessonType
-        .replace(")", "")
-        .substring(lessonType.indexOf("(") + 1);
-
-      const dayStr = $(row)
-        .children(":nth-child(2)")
-        .text();
-
-      const timeStr = $(row)
-        .children(":nth-child(3)")
-        .text();
-
-      const hour = parseInt(timeStr.substring(0, timeStr.indexOf(":")), 10);
-      const minutes = parseInt(timeStr.substring(timeStr.indexOf(":") + 1), 10);
-
-      const startTime = hour + (minutes % 30);
-
-      const room = $(row)
-        .children(":nth-child(4)")
-        .text();
-
-      const professor = $(row)
-        .children(":nth-child(5)")
-        .text();
-
-      const clazz = $(row).find(":nth-child(6) > a");
-      const className = $(clazz).text();
-      const classUrl = $(clazz).attr("href");
-
-      return {
-        lessonType,
-        dayOfTheWeek: daysOfTheWeek[dayStr],
-        startTime,
-        room,
-        professor,
-        className,
-        classUrl
-      };
-    })
-    .get();
-}
-
-function scrapeLesson($: CheerioStatic, lessonElem: CheerioElement): IncompleteLesson {
+function scrapeLesson(
+  $: CheerioStatic,
+  lessonElem: CheerioElement
+): IncompleteLesson {
   let lessonType = $(lessonElem)
     .find("b")
     .text();
@@ -105,7 +49,12 @@ function scrapeLesson($: CheerioStatic, lessonElem: CheerioElement): IncompleteL
  * @param rowIndex current row index in the rows array. Also used for calculating class start time.
  * @return {*}
  */
-function scrapeRow($: CheerioStatic, rows: Cheerio, rowspans = [0, 0, 0, 0, 0, 0], rowIndex = 0): Lesson[] {
+function scrapeRow(
+  $: CheerioStatic,
+  rows: Cheerio,
+  rowspans = [0, 0, 0, 0, 0, 0],
+  rowIndex = 0
+): Lesson[] {
   if (rows.length === rowIndex) {
     return [];
   }
@@ -131,8 +80,22 @@ function scrapeRow($: CheerioStatic, rows: Cheerio, rowspans = [0, 0, 0, 0, 0, 0
       // The rowspan indicates how much time a class takes
       // If there is no rowspan, it means it is a blank cell
       if (rowspan > 0) {
+        const href = $(column)
+          .find("b > acronym > a")
+          .attr("href");
+
+        const queryString = querystring.parse(
+          href.substring(href.indexOf("?") + 1)
+        );
+
+        const courseUnitId = parseInt(queryString.pv_ocorrencia_id, 10);
+
+        // Every lesson must have a course unit id
+        assert(!isNaN(courseUnitId));
+
         newRowspans[i] = rowspan;
         classes.push({
+          courseUnitId,
           dayOfTheWeek: i,
           startTime: 8 + rowIndex / 2,
           duration: rowspan / 2.0,
