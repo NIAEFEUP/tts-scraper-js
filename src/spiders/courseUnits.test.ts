@@ -1,5 +1,5 @@
 import fs from "fs";
-import { Course } from "../models";
+import { Course, CourseUnit } from "../models";
 import { scrapeCourseUnitInfo, scrapeSearchPages } from "./courseUnits";
 
 describe("searchPages", () => {
@@ -80,7 +80,10 @@ describe("courseUnitInfo", () => {
       year: 2018
     };
 
-    const expected = {
+    const courseUnitId = 1;
+
+    const expected: CourseUnit = {
+      id: courseUnitId,
       name: "Arquitectura e Gestão de Redes e Sistemas",
       acronym: "AGRS",
       courseId: course.id,
@@ -89,7 +92,9 @@ describe("courseUnitInfo", () => {
       semesters: [2]
     };
 
-    expect(scrapeCourseUnitInfo(html, course)).toEqual(expected);
+    expect(scrapeCourseUnitInfo(html, course.id, courseUnitId)).toEqual(
+      expected
+    );
   });
 
   test("is not scraped when page redirects to another", () => {
@@ -97,17 +102,13 @@ describe("courseUnitInfo", () => {
       .readFileSync("./examples/course_unit_info_redirect.html", "latin1")
       .toString();
 
-    const course: Course = {
-      id: 0,
-      facultyAcronym: "feup",
-      acronym: "TEST",
-      name: "Test Name",
-      planId: 0,
-      year: 2018
-    };
+    const courseId = 0;
+    const courseUnitId = 1;
 
     const expected = null;
 
-    expect(scrapeCourseUnitInfo(html, course)).toEqual(expected);
+    expect(scrapeCourseUnitInfo(html, courseId, courseUnitId)).toEqual(
+      expected
+    );
   });
 });

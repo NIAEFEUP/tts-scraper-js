@@ -46,7 +46,7 @@ export function scrapeSearchPages(html: string): CourseUnitSearch {
 export function scrapeCourseUnitInfo(
   html: string,
   courseId: Course["id"],
-  courseUnitId: number
+  courseUnitId: CourseUnit["id"]
 ): CourseUnit | null {
   const $ = cheerio.load(html);
 
