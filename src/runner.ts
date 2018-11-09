@@ -1,5 +1,6 @@
-import { fetch } from "./fetcher";
+import { fetch, login } from "./fetcher";
 import {
+  Class,
   Course,
   CourseType,
   CourseUnit,
@@ -122,13 +123,13 @@ export async function fetchCourseUnits(
   return results.filter(cu => cu !== null) as CourseUnit[];
 }
 
-async function fetchClasses(
-  faculty: Faculty,
+export async function fetchClasses(
+  facultyAcronym: Faculty["acronym"],
   courseId: number,
   year: number,
   periodId: Period
-) {
-  const url = generateClassesUrl(faculty.acronym, courseId, year, periodId);
+): Promise<Class[]> {
+  const url = generateClassesUrl(facultyAcronym, courseId, year, periodId);
 
   const html = await fetch(url, { cookieNeeded: true });
 

@@ -1,3 +1,6 @@
+/* tslint:disable-next-line no-var-requires*/
+const read = require("read");
+
 /**
  * Deletes everything until the first occurrence of char
  * @param str
@@ -29,4 +32,19 @@ export function parseList(input: string): string[] {
  */
 export function flatten<T>(array: T[]): T {
   return [].concat.apply([], array);
+}
+
+/**
+ * Read password from stdin, masking the input
+ */
+export function readPassword(prompt: string = "Password:"): Promise<string> {
+  return new Promise((resolve, reject) => {
+    read({ prompt, silent: true }, (error: any, result: string) => {
+      if (error) {
+        reject(error);
+      }
+
+      resolve(result);
+    });
+  });
 }

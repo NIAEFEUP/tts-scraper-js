@@ -2,9 +2,15 @@ import program from "commander";
 import { isArray, isNumber, isString } from "util";
 import { description, version } from "../package.json";
 import { generateCsv } from "./csv";
-import { Course, CourseUnit, Faculty } from "./models";
-import { fetchCourses, fetchCourseUnits, fetchFaculties } from "./runner";
-import { flatten, parseIntegerList, parseList } from "./utils";
+import { login } from "./fetcher";
+import { Class, Course, CourseUnit, Faculty } from "./models";
+import {
+  fetchClasses,
+  fetchCourses,
+  fetchCourseUnits,
+  fetchFaculties
+} from "./runner";
+import { flatten, parseIntegerList, parseList, readPassword } from "./utils";
 
 program.version(version).description(description);
 
@@ -62,7 +68,7 @@ program
     "lower case faculty acronym where the courses belong to, e.g.: feup"
   )
   .option(
-    "-c, --courses <acronyms>",
+    "-c, --courses <course-ids>",
     "comma-separated array of courses's ids, e.g.: 213,214,215",
     parseIntegerList
   )
@@ -118,6 +124,79 @@ program
     const courseUnits: CourseUnit[] = flatten(courseUnitsPerCourse);
 
     console.log(await generateCsv(courseUnits));
+  });
+
+program
+  .command("classes")
+  .description("scrape classes")
+  .option(
+    "-f, --faculty <acronym>",
+    "lower case faculty acronym where the courses belong to, e.g.: feup"
+  )
+  .option(
+    "-c, --courses <course-ids>",
+    "comma-separated array of courses's ids, e.g.: 213,214,215",
+    parseIntegerList
+  )
+  .option(
+    "-y, --year <year>",
+    "school year, e.g. for 2017/18, the year is 2017.",
+    parseInt
+  )
+  .option(
+    "-p --period <period>",
+    "school period, eg. 1 for annual, 2 for first semester, 3 for second semester",
+    parseInt
+  )
+  .option(
+    "-u, --username <username>",
+    "username used to login in sigarra, e.g.: up201859432"
+  )
+  .action(async options => {
+    if (!isString(options.faculty)) {
+      console.error(`Invalid command: 'faculty' must be a string`);
+
+      process.exit(1);
+    }
+
+    if (!isArray(options.courses) || !options.courses.every(Number.isInteger)) {
+      console.error(`Invalid command: 'courses' must be an array of integers`);
+
+      process.exit(1);
+    }
+
+    if (!isNumber(options.year) || options.year < 0) {
+      console.error(`Invalid command: 'year' must be a number`);
+
+      process.exit(1);
+    }
+
+    if (!isNumber(options.period) || options.period < 1 || options.period > 3) {
+      console.error(
+        `Invalid command: 'period' must be a number between 1 and 3`
+      );
+
+      process.exit(1);
+    }
+
+    if (!isString(options.username)) {
+      console.error(`Invalid command: 'username' must be a string`);
+
+      process.exit(1);
+    }
+
+    await login(options.username, await readPassword());
+
+    const promises: Array<Promise<Class[]>> = options.courses.map(
+      (courseId: number) =>
+        fetchClasses(options.faculty, courseId, options.year, options.period)
+    );
+
+    const classesPerCourse = await Promise.all(promises);
+
+    const classes: Class[] = flatten(classesPerCourse);
+
+    console.log(await generateCsv(classes));
   });
 
 program.on("command:*", () => {
