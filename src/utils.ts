@@ -1,5 +1,7 @@
 /* tslint:disable-next-line no-var-requires*/
 const read = require("read");
+// tslint:disable-next-line no-var-requires
+const fs = require("fs");
 
 /**
  * Deletes everything until the first occurrence of char
@@ -45,6 +47,28 @@ export function readPassword(prompt: string = "Password:"): Promise<string> {
       }
 
       resolve(result);
+    });
+  });
+}
+
+/**
+ * Promise version of `fs.writeFile`
+ * @param file
+ * @param data
+ * @param options
+ */
+export function writeFile(
+  file: string,
+  data: string,
+  options?: object
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(file, data, options, (err: Error) => {
+      if (err) {
+        reject(err);
+      }
+
+      resolve();
     });
   });
 }

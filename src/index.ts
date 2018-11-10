@@ -1,3 +1,6 @@
+// tslint:disable-next-line no-var-requires
+const fs = require("fs");
+
 import program from "commander";
 import { isArray, isNumber, isString } from "util";
 import { description, version } from "../package.json";
@@ -11,9 +14,139 @@ import {
   fetchCourseUnits,
   fetchFaculties
 } from "./runner";
-import { flatten, parseIntegerList, parseList, readPassword } from "./utils";
+import {
+  flatten,
+  parseIntegerList,
+  parseList,
+  readPassword,
+  writeFile
+} from "./utils";
 
 program.version(version).description(description);
+
+program
+  .command("all")
+  .description(
+    "scrape faculties, courses, classes and schedules. May take a while."
+  )
+  .option(
+    "-y, --year <year>",
+    "School year, e.g. for 2017/18, the year is 2017.",
+    parseInt
+  )
+  .option(
+    "-p --period <period>",
+    "School period, eg. 1 for annual, 2 for first semester, 3 for second semester",
+    parseInt
+  )
+  .option(
+    "-o --output <dir>",
+    "Output directory for CSVs. Must exist in the file system."
+  )
+  .option(
+    "-u --username <username>",
+    "username used to login in sigarra, e.g.: up201859432"
+  )
+  .action(async options => {
+    if (!isNumber(options.year) || options.year < 0) {
+      console.error(`Invalid command: 'year' must be a number`);
+
+      process.exit(1);
+    }
+
+    if (!isNumber(options.period) || options.period < 1 || options.period > 3) {
+      console.error(
+        `Invalid command: 'period' must be a number between 1 and 3`
+      );
+
+      process.exit(1);
+    }
+
+    if (!isString(options.output) || !fs.existsSync(options.output)) {
+      console.error(`Invalid command: 'output' directory must exist`);
+
+      process.exit(1);
+    }
+
+    await login(options.username, await readPassword());
+
+    const writePromises: Array<Promise<void>> = [];
+
+    const faculties: Faculty[] = await fetchFaculties();
+    writePromises.push(
+      writeFile(`${options.output}/faculties.csv`, await generateCsv(faculties))
+    );
+
+    const coursePromises: Array<Promise<Course[]>> = faculties.map(
+      (faculty: Faculty) => fetchCourses(faculty.acronym, options.year)
+    );
+
+    const coursesPerFaculty = await Promise.all(coursePromises);
+
+    const courses: Course[] = flatten(coursesPerFaculty);
+    writePromises.push(
+      writeFile(`${options.output}/courses.csv`, await generateCsv(courses))
+    );
+
+    const courseMap: Map<number, Course> = new Map(
+      courses.map((course: Course) => [course.id, course] as [number, Course])
+    );
+
+    const courseUnitPromises: Array<Promise<CourseUnit[]>> = courses.map(
+      (course: Course) =>
+        fetchCourseUnits(
+          course.facultyAcronym,
+          course.id,
+          options.year,
+          options.period
+        )
+    );
+
+    const courseUnitsPerCourse = await Promise.all(courseUnitPromises);
+
+    const courseUnits: CourseUnit[] = flatten(courseUnitsPerCourse);
+    writePromises.push(
+      writeFile(
+        `${options.output}/course-units.csv`,
+        await generateCsv(courseUnits)
+      )
+    );
+
+    const classPromises: Array<Promise<Class[]>> = courses.map(
+      (course: Course) =>
+        fetchClasses(
+          course.facultyAcronym,
+          course.id,
+          options.year,
+          options.period
+        )
+    );
+
+    const classesPerCourse = await Promise.all(classPromises);
+
+    const classes: Class[] = flatten(classesPerCourse);
+    writePromises.push(
+      writeFile(`${options.output}/classes.csv`, await generateCsv(classes))
+    );
+
+    const promises: Array<Promise<Lesson[]>> = classes.map((clazz: Class) =>
+      fetchClassesSchedule(
+        courseMap.get(clazz.courseId)!.facultyAcronym,
+        options.year,
+        options.period,
+        clazz.id
+      )
+    );
+
+    const lessonsPerClass = await Promise.all(promises);
+
+    const lessons: Lesson[] = flatten(lessonsPerClass);
+    writePromises.push(
+      writeFile(`${options.output}/lessons.csv`, await generateCsv(lessons))
+    );
+
+    await writePromises;
+  });
 
 program
   .command("faculties")

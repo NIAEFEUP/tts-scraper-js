@@ -22,6 +22,7 @@ export interface Course extends IncompleteCourse {
 export interface Class {
   id: number;
   className: string;
+  courseId: number;
 }
 
 export interface CourseUnit {

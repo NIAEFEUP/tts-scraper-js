@@ -1,8 +1,8 @@
 import * as cheerio from "cheerio";
 import { URLSearchParams } from "url";
-import { Class } from "../models";
+import { Class, Course } from "../models";
 
-export function scrapeClasses(html: string): Class[] {
+export function scrapeClasses(html: string, courseId: Course["id"]): Class[] {
   const $ = cheerio.load(html);
 
   return ($("table.tabela > tbody > tr.d > td a")
@@ -16,7 +16,8 @@ export function scrapeClasses(html: string): Class[] {
 
       return {
         id: parseInt(queryParams.get("pv_turma_id") as string, 10),
-        className
+        className,
+        courseId
       };
     })
     .get() as any) as Class[];

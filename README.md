@@ -18,6 +18,7 @@ Options:
 
 Commands:
 
+  all [options]           scrape faculties, courses, classes and schedules. May take a while.
   faculties               scrape faculties
   courses [options]       scrape courses
   course-units [options]  scrape course units
@@ -28,6 +29,14 @@ Commands:
 ## Running 
 
 First, install the dependencies by running `npm install`. This only needs to be run for the first time and every time there is an update in package versions.
+
+### Scraping from faculties to lessons at once
+
+To scrape from faculties to lessons at once, run `npm start --silent -- all`. 
+This will give you a help menu with the instructions.
+Remember this type of scraping saves the results as CSVs in a specified directory. 
+
+### Scraping specific type
 
 To scrape faculties and output to `stdout`, run `npm start --silent -- faculties`. 
 

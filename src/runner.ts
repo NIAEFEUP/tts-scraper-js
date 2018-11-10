@@ -133,7 +133,7 @@ export async function fetchClasses(
 
   const html = await fetch(url, { cookieNeeded: true });
 
-  return scrapeClasses(html);
+  return scrapeClasses(html, courseId);
 }
 
 export async function fetchClassesSchedule(
